@@ -6,12 +6,13 @@ function Bingo() {
 		<>
 			<Navbar />
 			<div className='container'>
-				<button className='home__button'>
-					<Link to={'/bingo/create'}>Create party</Link>
-				</button>
-				<button className='home__button'>
-					<Link to={'/bingo/join'}>Join party</Link>
-				</button>
+				<Link to={'/bingo/create'}>
+					<button className='home__button'>Create party</button>
+				</Link>
+
+				<Link to={'/bingo/join'}>
+					<button className='home__button'>Join party</button>
+				</Link>
 			</div>
 		</>
 	)

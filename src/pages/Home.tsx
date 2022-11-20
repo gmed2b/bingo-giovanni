@@ -6,9 +6,9 @@ function Home() {
 		<>
 			<Navbar />
 			<div className='container'>
-				<button className='home__button'>
-					<Link to={'/bingo'}>Bingo</Link>
-				</button>
+				<Link to={'/bingo'}>
+					<button className='home__button'>Bingo</button>
+				</Link>
 			</div>
 		</>
 	)

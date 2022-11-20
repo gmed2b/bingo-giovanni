@@ -5,22 +5,19 @@ function Navbar() {
 		<nav className='navbar'>
 			<h2 style={{ margin: '1rem' }}>CRBl_ Studio Games</h2>
 			<div className='right__side'>
-				<button>
-					<Link
-						to={'/'}
-						className='link'
-					>
-						Home
-					</Link>
-				</button>
-				<button>
-					<Link
-						to=''
-						className='link'
-					>
-						Github
-					</Link>
-				</button>
+				<Link
+					to={'/'}
+					className='link'
+				>
+					<button>Home</button>
+				</Link>
+
+				<Link
+					to=''
+					className='link'
+				>
+					<button>Github</button>
+				</Link>
 			</div>
 		</nav>
 	)

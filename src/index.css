@@ -136,21 +136,31 @@ input {
 	font-weight: bold;
 	font-size: 1.2rem;
 }
-.row {
-	background: rgb(2, 0, 36);
-	background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(121, 9, 56, 1) 35%, rgba(0, 212, 255, 1) 100%);
-}
 .col {
 	color: white;
-	padding: 0.5rem;
-	font-weight: bold;
-	font-size: 1.2rem;
-	border: 5px solid #242424;
+	box-shadow: 4px 8px 4px 4px rgba(0, 0, 0, 0.2);
+	border: 1px solid #747bff;
 
 	padding: 10px;
-	margin: 0;
+	margin: 10px;
+	cursor: pointer;
 }
 .admin {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
+}
+.bingo {
+	font-size: 48px;
+	background: rgb(131, 58, 180);
+	background: linear-gradient(90deg, rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 50%, rgba(252, 176, 69, 1) 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	box-shadow: 4px 8px 4px 4px rgba(0, 0, 0, 0.2);
+}
+.selected {
+	background: #747bff;
+	border: white;
+}
+.selected span {
+	color: white;
 }

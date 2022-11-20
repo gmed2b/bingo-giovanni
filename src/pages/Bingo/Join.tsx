@@ -11,10 +11,16 @@ const customConfig: Config = {
 	style: 'capital'
 }
 
+const generateRandomPseudo = () => {
+	const pseudo = uniqueNamesGenerator(customConfig)
+	localStorage.setItem('pseudo', pseudo)
+	return pseudo
+}
+
 function Join() {
 	const navigate = useNavigate()
 	const [searchParams, setSearchParams] = useSearchParams()
-	const [pseudo, setPseudo] = useState(localStorage.getItem('pseudo') || uniqueNamesGenerator(customConfig))
+	const [pseudo, setPseudo] = useState(localStorage.getItem('pseudo') || generateRandomPseudo())
 	const [roomId, setRoomId] = useState(() => searchParams.get('roomId') ?? '')
 	const [publicRooms, setPublicRooms] = useState<string[]>([])
 
@@ -24,12 +30,7 @@ function Join() {
 		})()
 	}, [])
 
-	const generateRandomPseudo = () => {
-		setPseudo(uniqueNamesGenerator(customConfig))
-	}
-
 	const handleJoin = () => {
-		localStorage.setItem('pseudo', pseudo)
 		navigate(`/bingo/room/${roomId}`)
 	}
 
@@ -57,7 +58,7 @@ function Join() {
 									localStorage.setItem('pseudo', v.target.value)
 								}}
 							/>
-							<button onClick={generateRandomPseudo}>Generate</button>
+							<button onClick={() => setPseudo(generateRandomPseudo())}>Generate</button>
 						</div>
 						<div className='form__item'>
 							<label htmlFor='pseudo'>Room Code</label>
@@ -82,10 +83,13 @@ function Join() {
 				<div className='container'>
 					<h1>Public room available</h1>
 					<div>
-						{publicRooms.map(room => (
-							<button>
-								<Link to={`/bingo/room/${room}`}>{room}</Link>
-							</button>
+						{publicRooms.map((room, idx) => (
+							<Link
+								to={`/bingo/room/${room}`}
+								key={idx}
+							>
+								<button>{room}</button>
+							</Link>
 						))}
 					</div>
 				</div>

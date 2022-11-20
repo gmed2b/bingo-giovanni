@@ -11,7 +11,9 @@ function Room() {
 	const [grid, setGrid] = useState<string[][]>([])
 	const [isAdmin, setIsAdmin] = useState<boolean>(false)
 	const [answers, setAnswers] = useState<{ answer: string; isTrue: boolean }[]>([])
+	const [pickedAnswers, setPickedAnswers] = useState<Set<string>>(new Set())
 	const [gridState, setGridState] = useState<boolean[][]>()
+	const [adminGridState, setAdminGridState] = useState<boolean[]>([])
 
 	useEffect(() => {
 		socket = new WebSocket(`ws://home.crbl.studio:7654/join/${roomId}/${pseudo}`)
@@ -41,12 +43,14 @@ function Room() {
 					break
 				case 'Answer':
 					console.log(msg.Answer)
+					setPickedAnswers(e => new Set([...e, msg.Answer]))
 					break
 				case 'Bingo':
 					alert(`${msg.Bingo} got a Bingo !!!`)
 					break
 			}
 		}
+		return () => socket.close()
 	}, [])
 
 	const handleAnswer = (x: number, y: number) => {
@@ -59,18 +63,6 @@ function Room() {
 	return (
 		<>
 			<Navbar />
-			<nav style={{ display: 'flex', justifyContent: 'center' }}>
-				<button>
-					<Link to={'/bingo/join'}>Left Game</Link>
-				</button>
-				<button
-					onClick={() => {
-						socket.send(JSON.stringify('Bingo'))
-					}}
-				>
-					BINGOOOOOOOOOOOOO
-				</button>
-			</nav>
 			<div className='container'>
 				<h1>Players ({players.length})</h1>
 				<div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
@@ -84,49 +76,80 @@ function Room() {
 					))}
 				</div>
 			</div>
-			<div className='container'>
-				<h1>Game</h1>
-				<div style={{ display: 'grid', gridTemplateRows: `repeat(${grid.length}, 1fr)` }}>
-					{grid.map((row, idx) => (
-						<div
-							style={{ display: 'grid', gridTemplateColumns: `repeat(${grid[0].length}, 1fr)` }}
-							key={idx}
-							className='row'
-						>
-							{row.map((col, idy) => (
-								<div
-									className='col'
-									key={idy}
-									style={gridState![idx][idy] ? { background: 'blue' } : {}}
-								>
-									<span onClick={e => handleAnswer(idx, idy)}>{col}</span>
-								</div>
-							))}
-						</div>
-					))}
-				</div>
-			</div>
-			{isAdmin && (
+			<div style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center' }}>
 				<div className='container'>
-					<h1>All answers</h1>
-					<div className='admin'>
-						{answers.map((col, idy) => (
+					<nav style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+						<button
+							className='bingo'
+							onClick={() => {
+								socket.send(JSON.stringify('Bingo'))
+							}}
+						>
+							BINGO
+						</button>
+						<Link to={'/bingo/join'}>
+							<button>Leave Game</button>
+						</Link>
+					</nav>
+				</div>
+				<div className='container'>
+					<h1>Game</h1>
+					<div style={{ display: 'grid', gridTemplateRows: `repeat(${grid.length}, 1fr)` }}>
+						{grid.map((row, idx) => (
 							<div
-								className='col'
-								key={idy}
+								style={{ display: 'grid', gridTemplateColumns: `repeat(${grid[0].length}, 1fr)` }}
+								key={idx}
+								className='row'
 							>
-								<span
-									onClick={() => {
-										socket.send(JSON.stringify({ Answer: col.answer }))
-									}}
-								>
-									{col.answer}
-								</span>
+								{row.map((col, idy) => (
+									<div
+										className={`col ${gridState![idx][idy] ? 'selected' : ''}`}
+										key={idy}
+										onClick={e => handleAnswer(idx, idy)}
+									>
+										<span>{col}</span>
+									</div>
+								))}
 							</div>
 						))}
 					</div>
 				</div>
-			)}
+				{isAdmin ? (
+					<div className='container'>
+						<h1>All answers</h1>
+						<div className='admin'>
+							{answers.map((col, idy) => (
+								<div
+									className={`col ${adminGridState![idy] ? 'selected' : ''}`}
+									key={idy}
+									onClick={() => {
+										socket.send(JSON.stringify({ Answer: col.answer }))
+										let adminGridStateCp = adminGridState.map(e => e)
+										adminGridStateCp[idy] = true
+										setAdminGridState(e => adminGridStateCp)
+									}}
+								>
+									<span>{col.answer}</span>
+								</div>
+							))}
+						</div>
+					</div>
+				) : (
+					<div className='container'>
+						<h1>Picked Answers</h1>
+						<div className='admin'>
+							{[...pickedAnswers].map((col, idy) => (
+								<div
+									className={`col`}
+									key={idy}
+								>
+									<span>{col}</span>
+								</div>
+							))}
+						</div>
+					</div>
+				)}
+			</div>
 		</>
 	)
 }
